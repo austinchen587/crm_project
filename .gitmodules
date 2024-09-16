@@ -1,3 +1,3 @@
 [submodule "crm_frontend"]
 	path = crm_frontend
-	url = https://github.com/yourusername/crm_frontend.git
+	url = git@github.com:austinchen587/crm_frontend.git

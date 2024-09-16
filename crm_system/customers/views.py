@@ -10,17 +10,13 @@ class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
 
-    def update(self, request, *args, **kwargs):
-        customer = self.get_object()
-        data = request.data
+    def perform_create(self, serializer):
+        # 创建客户时，不需要特别处理，默认会添加创建时间
+        serializer.save()
 
-        #手动更新编辑时间和编辑次数
-        customer.last_edited = timezone.now()
-        customer.edit_count += 1
-        
-        serializer = CustomerSerializer(customer,data=data,partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
+    def perform_update(self, serializer):
+        # 更新客户时自动更新最后编辑时间和编辑次数
+        instance = serializer.save()
+        instance.last_edited = timezone.now()
+        instance.edit_count += 1
+        instance.save()
