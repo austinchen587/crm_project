@@ -4,6 +4,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
+from .models import NoteHistory
+from rest_framework.decorators import api_view
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -20,3 +22,14 @@ class CustomerViewSet(viewsets.ModelViewSet):
         instance.last_edited = timezone.now()
         instance.edit_count += 1
         instance.save()
+
+@api_view(['GET'])
+def customer_note_history(request, customer_id):
+    notes = NoteHistory.objects.filter(customer_id=customer_id)
+    data = [{
+        "note_content": note.note_content,
+        "timestamp":note.timestamp,
+
+
+    } for note in notes]
+    return Response(data)
